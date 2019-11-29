@@ -1,32 +1,44 @@
 import React, {Component} from 'react'
 import SearchBar from './components/SearchBar'
 import Card from './components/Card'
-
+import Container from './components/Container'
+import Heroe from './services/Heroe'
 
 class App extends Component{
   state={
-    card: {
-      id: 1,
-      caminhoImagem: 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Iron_Man_bleeding_edge.jpg/250px-Iron_Man_bleeding_edge.jpg',
-      nomeHeroi: 'Iron Man',
-    },
-    nomeHeroi: ''
+    heroi: null
   }
   
-  getPesquisa = (valorPesquisa) => {
-    this.setState({nomeHeroi: valorPesquisa})
+  searchHeroe = (valorPesquisa) => {
+    
+    Heroe.search(valorPesquisa).then(resposta => {
+      if(resposta.data.response === 'error'){
+        alert('Heroi inesistente!')
+      }else{
+        this.setState({heroi: resposta.data.results[0]})
+      }
+    })
+
+
   }
 
+  
   render(){
     return (
       <div id="app">
-        <SearchBar getPesquisa={this.getPesquisa} pesquisa='pesquisa'/>
+        <SearchBar getPesquisa={this.searchHeroe}/>
         <div className="row">
           <div className="col s12 m4">
           </div>
           <div className="col s12 m4">
             
-            <Card card={this.state.card}/>
+            {this.state.heroi === null ? (
+              <Container/>
+            ) : (
+              <Card card={this.state.heroi}/>
+
+            )}
+
           </div>
           <div className="col s12 m4"></div>
 
